@@ -84,8 +84,74 @@ public class Model {
      *  Empty spaces are stored as null.
      * */
     public boolean emptySpaceExists() {
-        // TODO: Task 2. Fill in this function.
+
+        int eg_len = board.size() -1;
+        int x_l_u = 0;
+        int y_l_u = eg_len;
+        int x_r_u = eg_len;
+        int y_r_u = eg_len;
+        int x_l_d = 0;
+        int y_l_d = 0;
+        int x_r_d = eg_len;
+        int y_r_d = 0;
+        /*Top empty*/
+
+        boolean flag = true;
+
+        for(int i = 0 ; i < eg_len ; i++) {
+            if(board.tile(x_l_u + i, y_l_u) != null) flag = false;
+        }
+
+        if(flag) return true;
+        flag = true;
+
+        for(int i = 0 ; i < eg_len ; i++) {
+            if(board.tile(x_l_d + i, y_l_d) != null) flag = false;
+        }
+
+        if(flag) return true;
+        flag = true;
+
+        for(int j = 0 ; j < eg_len ; j++) {
+            if(board.tile( x_l_u, y_l_u - j) != null) flag = false;
+        }
+
+        if(flag) return true;
+        flag = true;
+
+        for(int j = 0 ; j < eg_len ; j++) {
+            if(board.tile(x_r_u , y_r_u - j) != null) flag = false;
+        }
+
+        if(flag) return true;
+
+
+        for(int i = x_l_d; i < eg_len ; i++) {
+            for(int j = y_l_d; j <eg_len; j++) {
+                if(board.tile(i, j) == null) {
+                    return true;
+                }
+//                else {
+//                    boolean is_valid = false;
+//                    if (i - 1 >= x_l_d) {
+//                        if (board.tile(i, j).value() == board.tile(i - 1, j).value()) is_valid = true;
+//                    }
+//                    if (i + 1 <= x_r_d) {
+//                        if (board.tile(i, j).value() == board.tile(i + 1, j).value()) is_valid = true;
+//                    }
+//                    if (j - 1 >= y_l_d) {
+//                        if (board.tile(i, j).value() == board.tile(i, j - 1).value()) is_valid = true;
+//                    }
+//                    if (j + 1 <= y_l_u) {
+//                        if (board.tile(i, j).value() == board.tile(i, j + 1).value()) is_valid = true;
+//                    }
+//                    if (is_valid) return true;
+//                }
+            }
+        }
+
         return false;
+
     }
 
     /**
@@ -95,6 +161,13 @@ public class Model {
      */
     public boolean maxTileExists() {
         // TODO: Task 3. Fill in this function.
+        int eg_len = board.size()-1;
+        for(int i = 0 ; i <= eg_len ; i++) {
+            for(int j = 0 ; j <= eg_len ; j++) {
+                if(board.tile(i, j) == null) continue;
+                if(board.tile(i, j).value() == MAX_PIECE) return true;
+            }
+        }
         return false;
     }
 
