@@ -55,12 +55,14 @@ public class Bomb {
     public void phase2(String password) {
         Random r = new Random(1337);
         Set<Integer> numbers = new HashSet<>();
+
         while (numbers.size() < 100000) {
             numbers.add(r.nextInt());
         }
 
         boolean correct = false;
         int i = 0;
+
         for (int number : numbers) {
             if (i == 1337 && Integer.parseInt(password) == number) {
                 correct = true;
