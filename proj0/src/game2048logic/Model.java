@@ -98,55 +98,39 @@ public class Model {
 
         boolean flag = true;
 
-        for(int i = 0 ; i < eg_len ; i++) {
+        for(int i = 0 ; i <= eg_len ; i++) {
             if(board.tile(x_l_u + i, y_l_u) != null) flag = false;
         }
 
         if(flag) return true;
         flag = true;
 
-        for(int i = 0 ; i < eg_len ; i++) {
+        for(int i = 0 ; i <= eg_len ; i++) {
             if(board.tile(x_l_d + i, y_l_d) != null) flag = false;
         }
 
         if(flag) return true;
         flag = true;
 
-        for(int j = 0 ; j < eg_len ; j++) {
+        for(int j = 0 ; j <= eg_len ; j++) {
             if(board.tile( x_l_u, y_l_u - j) != null) flag = false;
         }
 
         if(flag) return true;
         flag = true;
 
-        for(int j = 0 ; j < eg_len ; j++) {
+        for(int j = 0 ; j <= eg_len ; j++) {
             if(board.tile(x_r_u , y_r_u - j) != null) flag = false;
         }
 
         if(flag) return true;
 
 
-        for(int i = x_l_d; i < eg_len ; i++) {
-            for(int j = y_l_d; j <eg_len; j++) {
+        for(int i = x_l_d; i <= eg_len ; i++) {
+            for(int j = y_l_d; j <= eg_len; j++) {
                 if(board.tile(i, j) == null) {
                     return true;
                 }
-//                else {
-//                    boolean is_valid = false;
-//                    if (i - 1 >= x_l_d) {
-//                        if (board.tile(i, j).value() == board.tile(i - 1, j).value()) is_valid = true;
-//                    }
-//                    if (i + 1 <= x_r_d) {
-//                        if (board.tile(i, j).value() == board.tile(i + 1, j).value()) is_valid = true;
-//                    }
-//                    if (j - 1 >= y_l_d) {
-//                        if (board.tile(i, j).value() == board.tile(i, j - 1).value()) is_valid = true;
-//                    }
-//                    if (j + 1 <= y_l_u) {
-//                        if (board.tile(i, j).value() == board.tile(i, j + 1).value()) is_valid = true;
-//                    }
-//                    if (is_valid) return true;
-//                }
             }
         }
 
@@ -179,6 +163,22 @@ public class Model {
      */
     public boolean atLeastOneMoveExists() {
         // TODO: Fill in this function.
+       if(emptySpaceExists()) return true;
+
+       int eg_len = board.size()-1;
+
+       boolean l_r_v, u_d_v;
+       l_r_v = u_d_v = false;
+       for(int i = 0; i <= eg_len ; i++)
+           for(int j = 0; j <= eg_len ; j++){
+               if(i-1 >= 0 && board.tile(i-1, j).value() == board.tile(i, j).value()) l_r_v = true;
+               if(j-1 >= 0 && board.tile(i, j-1).value() == board.tile(i,j).value()) u_d_v = true;
+               if(l_r_v && u_d_v) return true;
+           }
+
+       if(l_r_v || u_d_v) return true;
+
+
         return false;
     }
 
@@ -198,9 +198,41 @@ public class Model {
      */
     public void moveTileUpAsFarAsPossible(int x, int y) {
         Tile currTile = board.tile(x, y);
+        if(currTile == null) return;
         int myValue = currTile.value();
-        int targetY = y;
+        int eg_len = board.size()-1;
+        int targetY = -1;
+        boolean has_equ = false;
+        for(int j = eg_len ; j > y ; j-- ) {
+            boolean flag = true;
+            for (int k = j; k > y; k--) {
+                if (board.tile(x, k) != null && board.tile(x, k).value() != board.tile(x, y).value()) {
+                    flag = false;
+                    has_equ = false;
+                    break;
+                } else {
+                    if (board.tile(x, k) != null) {
+                        if(!board.tile(x, k).wasMerged()) {
+                            flag = true;
+                            has_equ = true;
+                        }else {
+                            flag = false;
+                            has_equ = false;
+                        }
+                    }
+                }
+            }
+            if (flag) {
+                targetY = j;
+                break;
+            }
+        }
+        if(targetY == -1) return;
 
+        if(has_equ) {
+            score += myValue * 2;
+        }
+        board.move(x, targetY, currTile);
         // TODO: Tasks 5, 6, and 10. Fill in this function.
     }
 
@@ -211,10 +243,21 @@ public class Model {
      * */
     public void tiltColumn(int x) {
         // TODO: Task 7. Fill in this function.
+        int eg_len = board.size() -1;
+        for(int j = eg_len -1 ; j >= 0 ; j--) {
+            moveTileUpAsFarAsPossible(x, j);
+        }
+        return;
     }
 
     public void tilt(Side side) {
         // TODO: Tasks 8 and 9. Fill in this function.
+        board.setViewingPerspective(side);
+        int eg_len = board.size()-1;
+        for(int i = 0 ; i <= eg_len ; i++) {
+            tiltColumn(i);
+        }
+        board.setViewingPerspective(Side.NORTH);
     }
 
     /** Tilts every column of the board toward SIDE.
